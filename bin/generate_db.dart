@@ -3,7 +3,12 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path/path.dart' as p;
-import 'package:sprawnosci_data/sprawnosci_data.dart';
+// Import individual src files (not the barrel) so this script stays pure-Dart
+// and can run under the plain `dart` CLI. The barrel re-exports
+// isar_utils.dart / all_spraw_book_slugs.dart which transitively import Flutter.
+import 'package:sprawnosci_data/src/data_importer.dart';
+import 'package:sprawnosci_data/src/models.dart';
+import 'package:sprawnosci_data/src/open_isar.dart';
 
 const _sprawRootPath = 'assets/sprawnosci';
 const _commonDirName = 'common';
