@@ -1,6 +1,9 @@
 .PHONY: install
 install:
 	@flutter pub get
+	@cp scripts/pre-commit .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+	@echo "Git hook installed."
 
 # Regenerate Isar adapters (after editing lib/src/models.dart)
 .PHONY: generate

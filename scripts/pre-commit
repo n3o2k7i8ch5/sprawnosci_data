@@ -1,0 +1,33 @@
+#!/bin/bash
+# Pre-commit hook for sprawnosci_data:
+# rebuilds assets/sprawnosci_db.isar.tar whenever the staged commit
+# touches the source YAMLs/SVGs or the importer/models. The freshly
+# built tar is auto-staged so the commit ships a consistent DB.
+
+GEN_FILE="assets/sprawnosci_db.isar.tar"
+TRIGGER_REGEX='^assets/sprawnosci/|^lib/src/models\.dart$|^lib/src/models\.g\.dart$|^lib/src/data_importer\.dart$|^lib/src/utils\.dart$|^bin/generate_db\.dart$'
+
+# Bail if no relevant staged changes
+if ! git diff --cached --name-only | grep -qE "$TRIGGER_REGEX"; then
+    exit 0
+fi
+
+echo "[sprawnosci_data] Staged changes touch data/import logic - rebuilding $GEN_FILE..."
+
+OLD_HASH=""
+[ -f "$GEN_FILE" ] && OLD_HASH=$(git hash-object "$GEN_FILE")
+
+if ! dart run bin/generate_db.dart --tar; then
+    echo "[sprawnosci_data] ERROR: generator failed - aborting commit."
+    exit 1
+fi
+
+NEW_HASH=$(git hash-object "$GEN_FILE")
+if [ "$OLD_HASH" != "$NEW_HASH" ]; then
+    git add "$GEN_FILE"
+    echo "[sprawnosci_data] Rebuilt and staged $GEN_FILE"
+else
+    echo "[sprawnosci_data] $GEN_FILE already up-to-date - nothing to stage"
+fi
+
+exit 0
