@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:harcapp_core/sprawnosci/models.dart';
 import 'package:harcapp_core/values/org.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import 'models.dart';
 
 enum SprawBookSlug {
   zhpZuchSim2022,
